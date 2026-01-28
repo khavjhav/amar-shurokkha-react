@@ -8,15 +8,18 @@ import ForPolice from './components/ForPolice';
 import ForCitizens from './components/ForCitizens';
 import Footer from './components/Footer';
 import DemoPage from './pages/DemoPage';
+import ResourcesPage from './pages/ResourcesPage';
 
 export default function App() {
   const [lang, setLang] = useState<Language>('en');
 
   const [showDemo, setShowDemo] = useState(window.location.hash === '#demo');
+  const [showResources, setShowResources] = useState(window.location.hash === '#resources');
 
   useEffect(() => {
     const handleHashChange = () => {
       setShowDemo(window.location.hash === '#demo');
+      setShowResources(window.location.hash === '#resources');
     };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
@@ -24,6 +27,10 @@ export default function App() {
 
   if (showDemo) {
     return <DemoPage />;
+  }
+
+  if (showResources) {
+    return <ResourcesPage />;
   }
 
   return (
@@ -66,6 +73,9 @@ export default function App() {
             </a>
             <a href="#demo" className="text-gray-700 hover:text-red-600 transition-colors font-medium">
               {lang === 'en' ? 'Demo' : 'ডেমো'}
+            </a>
+            <a href="#resources" className="text-gray-700 hover:text-red-600 transition-colors font-medium">
+              {lang === 'en' ? 'Resources' : 'রিসোর্স'}
             </a>
             <a href="#for-government" className="text-gray-700 hover:text-red-600 transition-colors font-medium">
               {lang === 'en' ? 'Government' : 'সরকার'}

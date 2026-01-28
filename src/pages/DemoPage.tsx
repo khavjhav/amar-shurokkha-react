@@ -29,7 +29,23 @@ const DemoPage: React.FC = () => {
                 <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-green-500 rounded-full blur-[120px]" />
             </div>
 
-            <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 items-start">
+            <div className="fixed top-0 left-0 right-0 h-16 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 z-[100] px-6 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Shield className="w-6 h-6 text-[#f42a41]" fill="#f42a41" />
+                    <span className="font-bold text-slate-900 dark:text-zinc-100">Amar Shurokkha</span>
+                </div>
+                <div className="flex items-center gap-4">
+                    <button onClick={() => window.location.hash = 'resources'} className="px-4 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 text-sm font-bold hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all">
+                        Resources
+                    </button>
+                    <a href="/" className="px-4 py-2 rounded-lg bg-[#f42a41] text-white text-sm font-bold hover:bg-[#d91e33] transition-all flex items-center gap-2">
+                        <ArrowRight className="w-4 h-4 rotate-180" />
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+
+            <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 items-start mt-16">
                 {/* Project Info & Controls (Left side on large screens) */}
                 <div className="space-y-6">
                     <div className="space-y-2">
