@@ -9,14 +9,14 @@ type ScreenType =
     | 'FOLLOW_ME'
     | 'AI_CHAT'
     | 'GUARDIAN_VIEW'
-    | 'POLICE_VIEW'
-    | 'POSTER'
-    | 'DOCUMENTS';
+    | 'AI_CHAT'
+    | 'GUARDIAN_VIEW'
+    | 'POLICE_VIEW';
 
 const DemoPage: React.FC = () => {
     const [currentScreen, setCurrentScreen] = useState<ScreenType>('ONBOARDING');
     const [language, setLanguage] = useState<'EN' | 'BN'>('EN');
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(true);
 
     // Transitions
     const next = (screen: ScreenType) => setCurrentScreen(screen);
@@ -68,8 +68,6 @@ const DemoPage: React.FC = () => {
                             <button onClick={() => next('AI_CHAT')} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${currentScreen === 'AI_CHAT' ? 'bg-[#f42a41] text-white shadow-lg' : 'bg-zinc-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}>Safety AI</button>
                             <button onClick={() => next('GUARDIAN_VIEW')} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${currentScreen === 'GUARDIAN_VIEW' ? 'bg-orange-500 text-white shadow-lg' : 'bg-zinc-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}>Guardian View</button>
                             <button onClick={() => next('POLICE_VIEW')} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${currentScreen === 'POLICE_VIEW' ? 'bg-blue-600 text-white shadow-lg' : 'bg-zinc-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}>Police View</button>
-                            <button onClick={() => next('POSTER')} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${currentScreen === 'POSTER' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-zinc-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}>System Poster</button>
-                            <button onClick={() => next('DOCUMENTS')} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${currentScreen === 'DOCUMENTS' ? 'bg-teal-600 text-white shadow-lg' : 'bg-zinc-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}>Project Deck</button>
                         </div>
                     </div>
 
@@ -93,7 +91,7 @@ const DemoPage: React.FC = () => {
 
                     {/* Screen Content */}
                     <div className={`relative w-full h-full rounded-[2.2rem] overflow-hidden ${isDarkMode ? 'bg-[#181112]' : 'bg-[#FCFDFC]'} text-slate-900 dark:text-white transition-colors duration-300`}>
-                        {renderScreen(currentScreen, { language, setLanguage, next })}
+                        {renderScreen(currentScreen, { language, setLanguage, next, isDarkMode })}
                     </div>
                 </div>
             </div>
@@ -114,10 +112,19 @@ const renderScreen = (type: ScreenType, props: any) => {
         case 'AI_CHAT': return <AIChatScreen {...props} />;
         case 'GUARDIAN_VIEW': return <GuardianViewScreen {...props} />;
         case 'POLICE_VIEW': return <PoliceViewScreen {...props} />;
-        case 'POSTER': return <PosterScreen {...props} />;
-        case 'DOCUMENTS': return <DocumentsScreen {...props} />;
     }
 };
+
+const LiveMap = ({ isDarkMode, zoom = 14, location = "Dhaka, Bangladesh" }: { isDarkMode: boolean; zoom?: number; location?: string }) => (
+    <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
+        <iframe
+            className={`w-full h-[120%] -translate-y-[10%] border-none ${isDarkMode ? 'invert-[0.9] hue-rotate-180 grayscale-[0.5]' : 'grayscale-[0.2]'}`}
+            src={`https://maps.google.com/maps?q=${encodeURIComponent(location)}&t=&z=${zoom}&ie=UTF8&iwloc=&output=embed`}
+            title="Map Background"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 pointer-events-none" />
+    </div>
+);
 
 const OnboardingScreen = ({ next, language, setLanguage }: any) => (
     <div className="h-full flex flex-col p-6 pt-16 relative">
@@ -351,6 +358,8 @@ const SOSActiveScreen = ({ next }: any) => {
 
     return (
         <div className="h-full bg-[#181112] text-white p-6 pt-16 relative overflow-hidden">
+            <LiveMap isDarkMode={true} zoom={16} />
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] pointer-events-none" />
             <div className="absolute inset-0 bg-[#f42a41]/10 animate-pulse pointer-events-none" />
 
             <div className="relative z-10 flex flex-col h-full">
@@ -397,16 +406,11 @@ const SOSActiveScreen = ({ next }: any) => {
     );
 };
 
-const FollowMeScreen = ({ next }: any) => (
+const FollowMeScreen = ({ next, isDarkMode }: any) => (
     <div className="h-full bg-zinc-950 text-white relative overflow-hidden">
-        {/* Simulated Map */}
-        <div className="absolute inset-0 bg-zinc-900 flex items-center justify-center">
-            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #006b1d 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-            <div className="relative">
-                <div className="w-4 h-4 rounded-full bg-[#006b1d] border-2 border-white shadow-[0_0_15px_#006b1d] animate-pulse" />
-                <div className="absolute -inset-8 border border-[#006b1d]/40 rounded-full animate-ping" />
-            </div>
-        </div>
+        {/* Live Map Background */}
+        <LiveMap isDarkMode={isDarkMode} zoom={15} />
+        <div className={`absolute inset-0 ${isDarkMode ? 'bg-black/40' : 'bg-white/20'} pointer-events-none`} />
 
         <div className="relative z-10 h-full flex flex-col p-6 pt-16">
             <div className="flex items-center gap-3">
@@ -546,7 +550,8 @@ const PoliceViewScreen = ({ next }: any) => (
         </div>
 
         <div className="flex-1 relative">
-            <div className="absolute inset-0 bg-zinc-900/40" />
+            <LiveMap isDarkMode={true} location="Banani, Dhaka" zoom={15} />
+            <div className="absolute inset-0 bg-black/40 pointer-events-none" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                 <div className="w-8 h-8 bg-red-500 rounded-full border-2 border-white shadow-[0_0_20px_#f52941] animate-ping" />
             </div>
@@ -586,75 +591,5 @@ const PoliceViewScreen = ({ next }: any) => (
     </div>
 );
 
-const PosterScreen = ({ next }: any) => (
-    <div className="h-full bg-zinc-900 flex flex-col relative overflow-hidden">
-        <div className="pt-16 px-6 pb-4 border-b border-white/10 flex items-center justify-between relative z-10 bg-zinc-900/80 backdrop-blur-md">
-            <h2 className="font-bold text-sm tracking-widest uppercase text-white">System Ecosystem</h2>
-            <button onClick={() => next('DASHBOARD')} className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white">
-                <X className="w-5 h-5" />
-            </button>
-        </div>
-        <div className="flex-1 overflow-auto bg-zinc-800 flex items-center justify-center p-4">
-            <img src="/assets/poster.png" alt="Safety Ecosystem Poster" className="max-w-full h-auto rounded-lg shadow-2xl" />
-        </div>
-        <div className="p-4 text-center bg-zinc-900 border-t border-white/10">
-            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-none mb-2">Technical Blueprint</p>
-            <p className="text-xs text-zinc-400">Amar Shurokkha Global Architecture v1.0</p>
-        </div>
-    </div>
-);
-
-const DocumentsScreen = ({ next }: any) => {
-    const [doc, setDoc] = useState<'GUIDE' | 'LAYER'>('GUIDE');
-
-    return (
-        <div className="h-full bg-zinc-50 dark:bg-zinc-900 flex flex-col relative overflow-hidden text-slate-900 dark:text-white">
-            <div className="pt-16 px-6 pb-4 border-b border-zinc-200 dark:border-white/10 flex items-center justify-between relative z-10 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md">
-                <h2 className="font-bold text-sm tracking-widest uppercase">Project Documents</h2>
-                <button onClick={() => next('DASHBOARD')} className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-white/10 flex items-center justify-center">
-                    <X className="w-5 h-5" />
-                </button>
-            </div>
-
-            <div className="flex p-2 gap-2 bg-zinc-100 dark:bg-black/20 mx-4 mt-4 rounded-xl">
-                <button
-                    onClick={() => setDoc('GUIDE')}
-                    className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${doc === 'GUIDE' ? 'bg-white dark:bg-white/10 shadow-sm' : 'opacity-40'}`}
-                >
-                    Safety Guide
-                </button>
-                <button
-                    onClick={() => setDoc('LAYER')}
-                    className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${doc === 'LAYER' ? 'bg-white dark:bg-white/10 shadow-sm' : 'opacity-40'}`}
-                >
-                    National Layer
-                </button>
-            </div>
-
-            <div className="flex-1 m-4 rounded-2xl border border-zinc-200 dark:border-white/10 overflow-hidden bg-white shadow-inner relative group">
-                <iframe
-                    src={doc === 'GUIDE' ? '/assets/safety_guide.pdf#toolbar=0' : '/assets/safety_layer.pdf#toolbar=0'}
-                    className="w-full h-full border-none"
-                    title="Slide Show"
-                />
-                <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-between">
-                    <p className="text-[10px] text-white font-bold uppercase tracking-widest">Interactive Preview</p>
-                    <a
-                        href={doc === 'GUIDE' ? '/assets/safety_guide.pdf' : '/assets/safety_layer.pdf'}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-[10px] text-white underline font-bold uppercase tracking-widest"
-                    >
-                        Full Screen
-                    </a>
-                </div>
-            </div>
-
-            <div className="px-6 pb-6 text-center">
-                <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">Scroll to read. Click full screen to download.</p>
-            </div>
-        </div>
-    );
-};
 
 export default DemoPage;
