@@ -9,6 +9,7 @@ import ForCitizens from './components/ForCitizens';
 import Footer from './components/Footer';
 import DemoPage from './pages/DemoPage';
 import ResourcesPage from './pages/ResourcesPage';
+import { Analytics } from "@vercel/analytics/react";
 
 export default function App() {
   const [lang, setLang] = useState<Language>('en');
@@ -26,11 +27,21 @@ export default function App() {
   }, []);
 
   if (showDemo) {
-    return <DemoPage />;
+    return (
+      <>
+        <DemoPage />
+        <Analytics />
+      </>
+    );
   }
 
   if (showResources) {
-    return <ResourcesPage />;
+    return (
+      <>
+        <ResourcesPage />
+        <Analytics />
+      </>
+    );
   }
 
   return (
@@ -112,6 +123,7 @@ export default function App() {
         <ForPolice lang={lang} />
         <ForCitizens lang={lang} />
         <Footer lang={lang} />
+        <Analytics />
       </main>
     </div >
   );
